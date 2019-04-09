@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello1
+  name: hello10
 spec:
   selector:
     matchLabels:
@@ -14,7 +14,7 @@ spec:
         app: hello10
     spec:
       containers:
-      - name: hello1
+      - name: hello10
         image: hashicorp/http-echo
         args: ["-text=Hello world (1)"]
         resources:
@@ -28,12 +28,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello1
+  name: hello10
 spec:
   type: LoadBalancer
   ports:
   - port: 80
     targetPort: 5678
   selector:
-    app: hello1
+    app: hello10
 
