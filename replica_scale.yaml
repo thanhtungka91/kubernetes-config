@@ -9,4 +9,3 @@ spec:
     name: not-k8s-extra
   minReplicas: 5
   maxReplicas: 10
-  targetCPUUtilizationPercentage: 50

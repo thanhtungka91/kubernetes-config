@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: not-k8s-extra
+spec:
+  selector:
+    matchLabels:
+      app: not-k8s-extra
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: not-k8s-extra
+    spec:
+      containers:
+      - name: go-echo
+        image: hashicorp/http-echo
+        args: [-text=Hello world (3), -text=Hello world (5)]
+        env:
+        - name: text
+          value: Hello world (1)
+        ports: []
+      - name: go-echo2
+        image: hashicorp/http-echo
+        args: [-text=Diffirent port, '-listen=:8080']
+        env:
+        - name: text
+          value: Hello world (1)
+        ports: []
+      - name: nginx
+        image: nginx:1.7.9
+        args: []
+        env:
+        - name: TEXT
+          value: Hello world (1)
+        ports: []
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: not-k8s-extra
+spec:
+  type: LoadBalancer
+  selector:
+    app: not-k8s-extra
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: not-k8s-extra
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: not-k8s-extra
+  minReplicas: 1
+  maxReplicas: 3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello1
+spec:
+  selector:
+    matchLabels:
+      app: hello1
+  replicas: 1
+  revisionHistoryLimit: 5
+  template:
+    metadata:
+      labels:
+        app: hello1
+    spec:
+      containers:
+      - name: hello1
+        image: hashicorp/http-echo
+        args: ["-text=Hello world (1)"]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5678
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello1
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5678
+  selector:
+    app: hello1
