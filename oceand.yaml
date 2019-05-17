@@ -1,0 +1,54 @@
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mobingi-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: mobingi
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oceand
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: oceand
+  replicas: 1
+  revisionHistoryLimit: 5
+  template:
+    metadata:
+      labels:
+        app: oceand
+    spec:
+      serviceAccountName: mobingi
+      containers:
+      - name: oceand
+        image: mobingi/oceand:e2d145c3eb30ec752fd8f74625e5895b25b384eb
+        resources:
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        imagePullPolicy: Always
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/oceand/config/
+      volumes:
+      - name: config-volume
+        configMap:
+          name: oceand-config
+          items:
+          - key: config.yaml
+            path: config.yaml
