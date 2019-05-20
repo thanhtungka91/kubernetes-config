@@ -35,6 +35,6 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 5678
-    nodePort: 3036
+    nodePort: 30036
   selector:
     app: hello2
