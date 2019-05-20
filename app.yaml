@@ -16,7 +16,7 @@ spec:
       containers:
       - name: hello10
         image: hashicorp/http-echo
-        args: ["-text=Hello world (1)"]
+        args: ["-text=Hello world (10)"]
         resources:
           requests:
             cpu: 100m
