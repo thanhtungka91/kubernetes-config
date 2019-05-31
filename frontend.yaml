@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: thanhtungka91/dashboard:v1
+          image: thanhtungka91/theme-blog:v1
           resources:
             requests:
               cpu: 100m
